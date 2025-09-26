@@ -18,6 +18,7 @@
       "@repositories/*": ["src/repositories/*"],
       "@middlewares/*": ["src/middlewares/*"],
       "@utils/*": ["src/utils/*"],
+      "@data/*": ["src/data/*"],
       "@shared-types/*": ["src/types/*"]
     },
     "types": ["node", "vitest"]

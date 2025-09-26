@@ -5,7 +5,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": false,
-    "outDir": "./dist-node"
+    "outDir": "./dist-node",
+    "types": ["node"]
   },
   "include": ["vite.config.ts"]
 }

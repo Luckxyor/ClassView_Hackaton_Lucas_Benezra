@@ -100,6 +100,17 @@ Frontend:
 - Pruebas unitarias sobre `summarizeStudentProgress` para garantizar la lógica central del seguimiento de entregas.
 - El frontend utiliza componentes desacoplados para facilitar pruebas futuras con Testing Library.
 
+## 🌐 Despliegue en GitHub Pages
+
+Este repositorio incluye el workflow `Deploy frontend to GitHub Pages` (`.github/workflows/pages.yml`) que publica automáticamente el build de `frontend/` en GitHub Pages.
+
+1. **Backend público**: desplegá el backend en un servicio con HTTPS (Render, Railway, Fly.io, etc.) y anotá su URL (por ejemplo, `https://api.semillerodigital.com/api`).
+2. **Configurar secreto**: en tu repositorio, andá a *Settings → Secrets and variables → Actions* y añadí un secreto llamado `VITE_API_BASE_URL` con la URL pública del backend. El build utilizará esa variable durante el deploy.
+3. **Habilitar Pages**: en *Settings → Pages*, seleccioná "GitHub Actions" como fuente. El workflow se dispara automáticamente con cada push a `main`, o manualmente desde la pestaña *Actions*.
+4. **Verificar base**: la app se servirá desde `https://<tu-usuario>.github.io/<repo>/` (la base se ajusta automáticamente en el build). Si usás un dominio custom, actualizá la configuración de Pages y, opcionalmente, agregá un `CNAME` a la raíz del proyecto.
+
+> Los archivos `.env` con credenciales reales no deben versionarse. Para builds locales copiá los archivos `.env.example`; para el CI/CD usá secretos en GitHub Actions.
+
 ## 🗺️ Roadmap sugerido
 
 - **Integraciones externas**:

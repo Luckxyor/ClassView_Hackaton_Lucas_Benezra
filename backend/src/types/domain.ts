@@ -12,6 +12,15 @@ export interface StudentProgressSummary {
   lastSubmissionAt?: string | null;
 }
 
+export interface CourseProgressPayload {
+  courseId: string;
+  courseName: string;
+  courseSection?: string | null;
+  teacherEmail: string;
+  teacherName?: string;
+  students: StudentProgressSummary[];
+}
+
 export interface CourseProgressSummary {
   courseId: string;
   courseName: string;
