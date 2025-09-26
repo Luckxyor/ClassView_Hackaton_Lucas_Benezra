@@ -57,6 +57,15 @@ const helmetMiddleware = (helmet as any).default ? (helmet as any).default() : (
 app.use(helmetMiddleware);
 app.use(morgan('dev'));
 
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    message: 'ClassView backend operativo',
+    healthcheck: '/health',
+    apiBasePath: '/api'
+  });
+});
+
 app.use('/api', apiRouter);
 
 app.get('/health', (_req: Request, res: Response) => {
