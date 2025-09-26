@@ -5,7 +5,7 @@
   "functions": {
     "api/index.ts": {
       "includeFiles": "dist/**",
-      "runtime": "nodejs20.x"
+      "runtime": "nodejs18.x"
     }
   }
 }
