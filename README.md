@@ -134,3 +134,95 @@ Frontend:
 - `npm run build`: build de producción (Vite + TypeScript)
 - `npm run preview`: vista previa del build
 - `npm run lint`: ESLint para TSX
+
+## 🐳 Despliegue (overview)
+
+Tienes varias estrategias posibles dependiendo de coste, velocidad y escalabilidad:
+
+| Componente | Opción rápida | Alternativas | Cuándo elegir |
+|------------|---------------|--------------|---------------|
+| Backend (Node) | Railway / Render | Fly.io, VPS Docker, Heroku (eco), Kubernetes | Necesitas API pública con poco mantenimiento |
+| Frontend (Vite estático) | Vercel / Netlify | Cloudflare Pages, GitHub Pages (con backend aparte), Nginx en VPS | Necesitas CDN y deploy continuo |
+| Ambos juntos | VPS + Nginx Reverse Proxy | Docker Compose + Traefik/Caddy, Fly.io 2 apps | Custom dominio y control total |
+
+### 1. Despliegue recomendado (separado) 
+Backend en Railway (o Render) + Frontend en Vercel.
+
+Pasos backend (Railway):
+1. Conecta el repo.
+2. Variables de entorno mínimas: `PORT=4000`, `CORS_ORIGIN=https://<tu-frontend>.vercel.app`, `USE_CLASSROOM_MOCK=1` (hasta usar Classroom real).
+3. Build Command: `npm run build`
+4. Start Command: `npm start`
+5. Railway detectará el puerto automáticamente (4000). Guarda la URL pública: `https://<app>.up.railway.app`.
+
+Pasos frontend (Vercel):
+1. Importa sólo carpeta `frontend/` (monorepo: configura Root Directory = `frontend`).
+2. Variable: `VITE_API_BASE_URL=https://<app>.up.railway.app/api`.
+3. Deploy: Vercel generará dominio `https://<frontend>.vercel.app`.
+
+### 2. Despliegue con Docker Compose en un VPS (un dominio)
+1. Copia el repositorio al servidor.
+2. Asegura Docker + docker compose plugin.
+3. Ejecuta:
+  ```bash
+  docker compose up -d --build
+  ```
+4. Instala Nginx y crea host:
+  ```nginx
+  server {
+    server_name app.midominio.com;
+    location /api/ { proxy_pass http://localhost:4000/api/; }
+    location / { proxy_pass http://localhost:5173/; }
+  }
+  ```
+5. Certificado con Let's Encrypt (certbot --nginx).
+6. En build del frontend puedes omitir `VITE_API_BASE_URL` (usará `/api`).
+
+### 3. Fly.io (ambos servicios)
+Creas dos apps (backend y frontend). Escalas por región cercana a usuarios. Usa `fly launch` en cada subdirectorio con Dockerfile.
+
+### 4. Netlify + Render (alternativa a Vercel + Railway)
+Front: Build command `npm run build`, publish `dist`. Env: `VITE_API_BASE_URL`.
+Back: Igual que Railway (Render detecta Node, set build y start). Configura Health Check Path `/health` en Render.
+
+### 5. GitHub Pages + Backend externo
+Sólo viable para frontend estático. Configuras workflow que haga `npm run build` y publique `dist/`. Debes apuntar `VITE_API_BASE_URL` al backend desplegado en otra plataforma.
+
+## 🔐 Variables de Entorno Clave
+
+Backend:
+| Variable | Nota |
+|----------|------|
+| CORS_ORIGIN | En producción NO uses `*`. Pon dominio frontend. |
+| USE_CLASSROOM_MOCK | Quita o pon `0` cuando pases a datos reales. |
+| GOOGLE_* | Requeridas sólo si integras Classroom real. |
+
+Frontend:
+| Variable | Nota |
+|----------|------|
+| VITE_API_BASE_URL | URL absoluta terminando en /api (si no reverse proxy). |
+
+## 🔍 Health / Monitoreo
+| Ruta | Servicio | Uso |
+|------|----------|-----|
+| /health | Backend | Liveness/Readiness |
+| /api/metrics | Backend | Métricas de docentes |
+
+## ✅ Checklist previo a producción
+| Ítem | Estado |
+|------|--------|
+| Variables de entorno definidas | ☐ |
+| Build backend OK (`npm run build`) | ☐ |
+| Build frontend OK (`npm run build`) | ☐ |
+| CORS restringido a dominio final | ☐ |
+| HTTPS habilitado | ☐ |
+| Healthcheck responde 200 | ☐ |
+| Logs visibles en plataforma | ☐ |
+
+## 🧪 Consejos adicionales
+* Añade compresión (Nginx ya sirve gzip; podrías agregar compression middleware si sirvieras estático desde Node).
+* Considera caching en CDN para assets del frontend.
+* Pino ya produce JSON parseable para observabilidad.
+
+---
+¿Necesitas un ejemplo de pipeline CI/CD (GitHub Actions) para automatizar? Pídelo y lo añadimos.
