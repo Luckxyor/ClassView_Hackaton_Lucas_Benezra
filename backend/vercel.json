@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": "npm run build",
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "dist/**",
+      "runtime": "nodejs20.x"
+    }
+  }
+}
