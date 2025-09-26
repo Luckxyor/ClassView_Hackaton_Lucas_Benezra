@@ -97,7 +97,7 @@ export function TeacherView (): JSX.Element {
 
       <Card className="border-transparent shadow-lg">
         <CardHeader className="flex flex-col gap-2">
-          <CardTitle className="text-2xl">Salud de tus cursos</CardTitle>
+          <CardTitle className="text-2xl">Estado de tus cursos</CardTitle>
           <CardDescription>Profundiza en cada grupo para detectar tendencias y oportunidades de acompañamiento.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
