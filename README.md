@@ -50,7 +50,17 @@ frontend/
 
 ## 🛠️ Puesta en marcha local
 
-### 1. Backend
+### Requisitos previos
+
+- Node.js 18 o superior (idealmente la versión LTS más reciente).
+- npm 9+ (se instala junto con Node.js).
+- Acceso a dos terminales de PowerShell para ejecutar frontend y backend en paralelo.
+
+> Si actualizás Node.js, reiniciá PowerShell antes de continuar para que se tome la nueva versión.
+
+### Levantar el backend
+
+En una terminal de PowerShell:
 
 ```powershell
 cd backend
@@ -58,14 +68,18 @@ npm install
 npm run dev
 ```
 
-- El servidor arranca en `http://localhost:4000`.
-- Endpoints disponibles:
-  - `GET /health`
-  - `GET /api/progress?teacherEmail=profesor@semillerodigital.org`
-  - `GET /api/metrics?teacherEmail=profesor@semillerodigital.org`
-  - `POST /api/communications`
+- El servidor quedará escuchando en `http://localhost:4000`.
+- Endpoints útiles para probar con el navegador o herramientas como Thunder Client/Postman:
+  - `GET http://localhost:4000/health`
+  - `GET http://localhost:4000/api/progress?teacherEmail=profesor@semillerodigital.org`
+  - `GET http://localhost:4000/api/metrics?teacherEmail=profesor@semillerodigital.org`
+  - `POST http://localhost:4000/api/communications`
 
-### 2. Frontend
+Si usás los datos mock (valor por defecto), cualquier email devolverá siempre la misma muestra de progreso.
+
+### Levantar el frontend
+
+En otra terminal de PowerShell:
 
 ```powershell
 cd frontend
@@ -73,13 +87,17 @@ npm install
 npm run dev
 ```
 
-- La web queda disponible en `http://localhost:5173` y proxea las llamadas al backend (`/api`).
-- Cambiá el correo en el header para simular distintos roles.
+- La aplicación se abre en `http://localhost:5173`.
+- El proxy de Vite redirige todas las llamadas a `/api` hacia el backend (`http://localhost:4000`).
+- Cambiá el correo desde el selector de la esquina superior derecha para simular distintos roles.
 
-### Variables de entorno
+### Datos reales vs. mock de Classroom
 
-- Copiá `backend/.env.example` a `backend/.env` y completa con las credenciales reales.
-- Copiá `frontend/.env.example` a `frontend/.env` si querés apuntar a otra URL de backend.
+- **Modo mock** (`USE_CLASSROOM_MOCK=true`): no requiere credenciales; ideal para demos rápidas.
+- **Modo real** (`USE_CLASSROOM_MOCK=false`):
+  1. Configurá la delegación de la cuenta de servicio en Google Workspace siguiendo la guía de la sección anterior.
+  2. Cargá las credenciales en el `.env` del backend.
+  3. Reiniciá `npm run dev` para que tome las nuevas variables.
 
 ## ✅ Scripts útiles
 
@@ -94,43 +112,3 @@ Frontend:
 - `npm run build`: build de producción (Vite + TypeScript)
 - `npm run preview`: vista previa del build
 - `npm run lint`: ESLint para TSX
-
-## 🧪 Cobertura inicial
-
-- Pruebas unitarias sobre `summarizeStudentProgress` para garantizar la lógica central del seguimiento de entregas.
-- El frontend utiliza componentes desacoplados para facilitar pruebas futuras con Testing Library.
-
-## 🌐 Despliegue en GitHub Pages
-
-Este repositorio incluye el workflow `Deploy frontend to GitHub Pages` (`.github/workflows/pages.yml`) que publica automáticamente el build de `frontend/` en GitHub Pages.
-
-1. **Backend público**: desplegá el backend en un servicio con HTTPS (Render, Railway, Fly.io, etc.) y anotá su URL (por ejemplo, `https://api.semillerodigital.com/api`).
-2. **Configurar secreto**: en tu repositorio, andá a *Settings → Secrets and variables → Actions* y añadí un secreto llamado `VITE_API_BASE_URL` con la URL pública del backend. El build utilizará esa variable durante el deploy.
-3. **Habilitar Pages**: en *Settings → Pages*, seleccioná "GitHub Actions" como fuente. El workflow se dispara automáticamente con cada push a `main`, o manualmente desde la pestaña *Actions*.
-4. **Verificar base**: la app se servirá desde `https://<tu-usuario>.github.io/<repo>/` (la base se ajusta automáticamente en el build). Si usás un dominio custom, actualizá la configuración de Pages y, opcionalmente, agregá un `CNAME` a la raíz del proyecto.
-
-> Los archivos `.env` con credenciales reales no deben versionarse. Para builds locales copiá los archivos `.env.example`; para el CI/CD usá secretos en GitHub Actions.
-
-## 🗺️ Roadmap sugerido
-
-- **Integraciones externas**:
-  - Conectar servicios de mensajería (Brevo, Twilio, WhatsApp Cloud API) en `CommunicationService`.
-  - Integrar Google Calendar para asistencia automática.
-- **Roles y autenticación**:
-  - Implementar OAuth con Google y limitar vistas según rol real.
-  - Persistir usuarios y cohortes en PostgreSQL (agregar Prisma/Drizzle).
-- **Analítica avanzada**:
-  - Dashboards históricos, comparativas entre cohortes y alertas automáticas.
-  - Exportación a CSV / Google Sheets.
-- **Infraestructura**:
-  - Docker Compose para orquestar backend + frontend + base de datos.
-  - Deploy en Render, Railway o GCP con CI/CD (GitHub Actions).
-
-## 🤝 Contribuir
-
-1. Fork & clone.
-2. Crear branch `feat/<nombre>`.
-3. Ejecutar linters/tests antes de hacer push.
-4. Abrir PR describiendo cambios y capturas.
-
-¡Listo! Con esta base el equipo puede iterar rápido y sumar nuevas capas de valor para Semillero Digital.
