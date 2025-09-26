@@ -58,7 +58,29 @@ frontend/
 
 > Si actualizás Node.js, reiniciá PowerShell antes de continuar para que se tome la nueva versión.
 
-### Levantar el backend
+### 1. Preparar variables de entorno
+
+**Backend**
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+- `USE_CLASSROOM_MOCK=true` permite probar sin credenciales de Google.
+- Para usar datos reales, completá `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_SERVICE_ACCOUNT_KEY`, `GOOGLE_ADMIN_EMAIL` y las variables OAuth.
+- `DATABASE_URL` y `NOTIFIER_WEBHOOK_URL` son opcionales hasta integrar servicios externos.
+
+**Frontend**
+
+```powershell
+Copy-Item frontend/.env.example frontend/.env
+```
+
+- Dejá `VITE_API_BASE_URL=http://localhost:4000/api` mientras uses el backend local.
+
+> No subas los archivos `.env` al repositorio: están ignorados por git y deben compartirse de forma segura.
+
+### 2. Levantar el backend
 
 En una terminal de PowerShell:
 
@@ -77,7 +99,7 @@ npm run dev
 
 Si usás los datos mock (valor por defecto), cualquier email devolverá siempre la misma muestra de progreso.
 
-### Levantar el frontend
+### 3. Levantar el frontend
 
 En otra terminal de PowerShell:
 
