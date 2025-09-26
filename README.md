@@ -31,4 +31,4 @@ npm run dev
 - **Frontend**: React + Vite + TypeScript
   - React Query para data fetching, Zustand para estado de sesión y Tailwind CSS para UI
   - Dashboards diferenciados por rol (alumno, profesor, coordinador)
-  - Gráficos con Recharts y envío de notificaciones desde la interfaz
+  - Gráficos con Recharts y envío de notificaciones desde la interfaz.
